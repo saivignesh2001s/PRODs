@@ -13,10 +13,14 @@ namespace PROD.Controllers
     {
         CustomerDAL cd = null;
         CarDAL cdal = null;
+        CarRentalEntities fd = null;
+        RentDAL fs = null;
         public CustomerController()
         {
             cd = new CustomerDAL();
             cdal= new CarDAL();
+            fd= new CarRentalEntities();
+            fs=new RentDAL();
         }
         public ActionResult Register()
         {
@@ -86,12 +90,14 @@ namespace PROD.Controllers
                 List<Car> cs = cdal.getcar();
                 foreach (Car c in cs)
                 {
+               
                     CAR cd = new CAR();
                     cd.Carid = c.Carid;
                     cd.Carname = c.Carname;
                     cd.PerDayCharge = c.PerDayCharge;
                     cd.ChargePerKm = c.ChargePerKm;
                     cd.CarType = c.CarType;
+                cd.Available = c.Available;
                     cars.Add(cd);
                 }
             return View(cars);
@@ -148,6 +154,54 @@ namespace PROD.Controllers
             }
 
         }
+        public ActionResult Rent(int id)
+        {
+
+            Customer k=(Customer)TempData["user"];
+            CARRENT r = new CARRENT();
+            r.CustomerId = k.Customerid;
+            r.CarId = id;
+            TempData["user"]=k;
+            return View(r);
+        }
+        [HttpPost]
+        public ActionResult Rent(int id,CARRENT r2){
+            
+              
+                CarRent r = new CarRent();
+                r.RentId = r2.RentId;
+            r.CarId = r2.CarId;
+                r.CustomerId = r2.CustomerId;
+                r.OdoReading = r2.OdoReading;
+            if (r2.RentOrderDate < DateTime.Now)
+            {
+                ViewBag.Message13 = "Check the date..";
+            }
+            else
+            {
+                r.RentOrderDate = r2.RentOrderDate;
+            }
+            if (r2.ReturnDate > r.RentOrderDate)
+            {
+                ViewBag.Message33 = "ReturnDate can not be more than rent date";
+            }
+            else
+            {
+                r.ReturnDate = r2.ReturnDate;
+            }
+                r.ReturnOdoReading = null;
+                bool k=fs.rent(r);
+            if (k)
+            {
+                cdal.locked(id);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
+           
+        }
 
         // GET: Customer/Delete/5
         public ActionResult Delete(int id)
@@ -169,6 +223,23 @@ namespace PROD.Controllers
             {
                 return View();
             }
+        }
+        public ActionResult Search()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Search(FormCollection c)
+        {
+            DateTime k1 = Convert.ToDateTime(c["RentDate"]);
+            DateTime k2 = Convert.ToDateTime(c["ReturnDate"]);
+            TempData["Rentdate"] = k1;
+            TempData["Returndate"] = k2;
+            List<CarRent> m1 = fd.CarRents.ToList();
+            m1=m1.Where(x=>((k1<=x.ReturnDate)&&(x.RentOrderDate>=k2))).ToList();
+            TempData["Carlist"] = from Carid in m1 select Carid;
+            return RedirectToAction("Index");
+
         }
     }
 }

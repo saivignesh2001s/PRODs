@@ -7,7 +7,7 @@
 
 
 <p style="font-size:15px;margin-left:1000px">
-    <img src="Profile.png" width="50" height="50">
+    <img src="@Url.Content("~/images/Profile.png")" width="50" height="50">
     @Html.ActionLink("Profile", "Details")
 </p>
 <table class="table">
@@ -56,10 +56,10 @@
             </td>
 
 
-            @if (item.Available == "Yes")
+            @if (item.Available.Trim().Equals("Yes"))
             {
                 <td>
-                    @Html.ActionLink("Rent", "Rent")
+                    @Html.ActionLink("Rent", "Rent", new {id=item.Carid})
                 </td>
             }
             else
@@ -69,7 +69,7 @@
                 @Html.ActionLink("Return", "Return")
                 </td>
             }
-            }
+          
 
         </tr>
     }

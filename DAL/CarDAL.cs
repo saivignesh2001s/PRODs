@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,6 +57,12 @@ namespace DAL
         {
             delete(id);
             addcar(c);
+        }
+        public void locked(int id)
+        {
+            Car k = context.Cars.Find(id);
+            k.Available = "No";
+            context.SaveChanges();
         }
     }
 }

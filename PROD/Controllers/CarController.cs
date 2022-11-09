@@ -13,11 +13,13 @@ namespace PROD.Controllers
         CarDAL cdal = null;
         CarRentalEntities cd = null;
         CustomerDAL csdal = null;
+        RentDAL rd = null;
         public CarController()
         {
             cdal = new CarDAL();
             cd = new CarRentalEntities();
             csdal=new CustomerDAL();
+            rd = new RentDAL();
         }
         public ActionResult EmpIndex()
         {
@@ -192,6 +194,29 @@ namespace PROD.Controllers
                 return View();
             }
         }
+
+        public ActionResult OrderedRentals(int id)
+        {
+            List<CarRent> s = rd.rentlist();
+            s = s.Where(x => x.CustomerId == id).ToList();
+            List<CARRENT> list = new List<CARRENT>();
+            foreach (var rent in s)
+            {
+                CARRENT r = new CARRENT();
+                r.RentId = rent.RentId;
+                r.CarId = rent.CarId;
+                r.CustomerId = rent.CustomerId;
+                r.RentOrderDate =Convert.ToDateTime(rent.RentOrderDate);
+                r.ReturnDate = rent.ReturnDate;
+                
+                
+                list.Add(r);
+            }
+            return View(list);
+
+        }
+      
+
 
     }
 }
