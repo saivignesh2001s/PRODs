@@ -1,0 +1,64 @@
+﻿@model PROD.Models.CAR
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CAR</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Carid)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Carid)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Carname)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Carname)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CarType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CarType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PerDayCharge)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PerDayCharge)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ChargePerKm)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ChargePerKm)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Available)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Available)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Carid }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
