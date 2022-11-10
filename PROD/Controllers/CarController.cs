@@ -207,7 +207,8 @@ namespace PROD.Controllers
                 r.CarId = rent.CarId;
                 r.CustomerId = rent.CustomerId;
                 r.RentOrderDate =Convert.ToDateTime(rent.RentOrderDate);
-                r.ReturnDate = rent.ReturnDate;
+                r.ReturnDate =Convert.ToDateTime(rent.ReturnDate);
+                r.LicenseNumber = rent.Licensenumber;
                 
                 
                 list.Add(r);

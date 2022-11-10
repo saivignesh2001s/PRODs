@@ -1,0 +1,51 @@
+﻿@model PROD.Models.Cost
+
+@{
+    ViewBag.Title = "Payment";
+}
+
+<h2>Payment</h2>
+
+<div>
+    <h4>Cost</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.KmsCovered)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.KmsCovered)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.tax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.tax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalCost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalCost)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Card", "Successful") |
+    @Html.ActionLink("Cash", "Successful") |
+    @Html.ActionLink("NetBanking","Successful")
+</p>

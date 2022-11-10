@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using DAL;
 using PROD.Models;
 using WebGrease.ImageAssemble;
@@ -69,7 +71,8 @@ namespace PROD.Controllers
             }
             if (k1)
             {
-                return RedirectToAction("Index");
+                //return RedirectToAction("Index");
+                return RedirectToAction("Search");
             }
             else
             {
@@ -87,19 +90,30 @@ namespace PROD.Controllers
           
                 List<CAR> cars = new List<CAR>();
 
-                List<Car> cs = cdal.getcar();
-                foreach (Car c in cs)
-                {
-               
-                    CAR cd = new CAR();
-                    cd.Carid = c.Carid;
-                    cd.Carname = c.Carname;
-                    cd.PerDayCharge = c.PerDayCharge;
-                    cd.ChargePerKm = c.ChargePerKm;
-                    cd.CarType = c.CarType;
-                cd.Available = c.Available;
-                    cars.Add(cd);
-                }
+             List<Car> cs1 = cdal.getcar();
+            List<int> ln = Carlist();
+
+          
+            foreach(int  item in ln)
+            {
+                Car k = cdal.find(item);
+                cs1.Remove(k);
+
+            }
+            foreach(var item in cs1)
+            {
+                cdal.unlocked(item.Carid);
+                CAR k = new CAR();
+                k.Carid=item.Carid;
+
+                k.Carname = item.Carname;
+                k.Available = item.Available;
+                k.PerDayCharge = item.PerDayCharge;
+                k.ChargePerKm = item.ChargePerKm;
+                k.CarType = item.CarType;
+                cars.Add(k);
+            }
+                
             return View(cars);
         }
 
@@ -162,6 +176,9 @@ namespace PROD.Controllers
             r.CustomerId = k.Customerid;
             r.CarId = id;
             TempData["user"]=k;
+            searchdates s = (searchdates)TempData["Search1"];
+            r.RentOrderDate = Convert.ToDateTime(s.RentDate);
+            r.ReturnDate = Convert.ToDateTime(s.ReturnDate);
             return View(r);
         }
         [HttpPost]
@@ -173,73 +190,291 @@ namespace PROD.Controllers
             r.CarId = r2.CarId;
                 r.CustomerId = r2.CustomerId;
                 r.OdoReading = r2.OdoReading;
-            if (r2.RentOrderDate < DateTime.Now)
-            {
-                ViewBag.Message13 = "Check the date..";
-            }
-            else
-            {
+            r.Licensenumber = r2.LicenseNumber;
+           
                 r.RentOrderDate = r2.RentOrderDate;
-            }
-            if (r2.ReturnDate > r.RentOrderDate)
-            {
-                ViewBag.Message33 = "ReturnDate can not be more than rent date";
-            }
-            else
-            {
-                r.ReturnDate = r2.ReturnDate;
-            }
+            
+           
+                r.ReturnDate = Convert.ToDateTime(r2.ReturnDate);
+            
                 r.ReturnOdoReading = null;
-                bool k=fs.rent(r);
-            if (k)
+            
+                bool k = fs.rent(r);
+                if (k)
+                {
+                   
+                    return RedirectToAction("Presenttrentals");
+                }
+                else
+                {
+                    return View();
+                }
+            
+            
+           
+        }
+        public ActionResult RentNow(int id)
+        {
+            CarRent rent = fs.find(id);
+            CARRENT r = new CARRENT();
+            r.RentId = rent.RentId;
+            r.CarId = rent.CarId;
+            r.CustomerId = rent.CustomerId;
+            r.RentOrderDate = Convert.ToDateTime(rent.RentOrderDate);
+            r.ReturnDate = Convert.ToDateTime(rent.ReturnDate);
+            r.OdoReading = rent.OdoReading;
+            r.ReturnOdoReading = rent.ReturnOdoReading;
+            r.LicenseNumber = rent.Licensenumber;
+            return View(r);
+        }
+        [HttpPost]
+        public ActionResult RentNow(int id,CARRENT rent)
+        {
+            try
             {
-                cdal.locked(id);
-                return RedirectToAction("Index");
+                CarRent r = new CarRent();
+                r.RentId = rent.RentId;
+                r.CarId = rent.CarId;
+                r.CustomerId = rent.CustomerId;
+                r.RentOrderDate = Convert.ToDateTime(rent.RentOrderDate);
+                r.ReturnDate = Convert.ToDateTime(rent.ReturnDate);
+                r.OdoReading = rent.OdoReading;
+                r.ReturnOdoReading = rent.ReturnOdoReading;
+                r.Licensenumber = rent.LicenseNumber;
+                fs.Return(id, r);
+                return RedirectToAction("Presenttrentals");
+
             }
-            else
+            catch
             {
                 return View();
             }
-           
+
+        }
+        public ActionResult Pastrentals()
+        {
+            List<CarRent> ls = fs.rentlist();
+            Customer k =(Customer) TempData["user"];
+            int id = k.Customerid;
+            TempData["user"] = k;
+            ls = ls.Where(x => (x.ReturnDate < DateTime.Today && x.CustomerId==id &&x.ReturnOdoReading!=null)).ToList();
+            List<CARRENT> list = new List<CARRENT>();
+            foreach (var rent in ls)
+            {
+                CARRENT r = new CARRENT();
+                r.RentId = rent.RentId;
+                r.CarId = rent.CarId;
+                r.CustomerId = rent.CustomerId;
+                r.RentOrderDate = Convert.ToDateTime(rent.RentOrderDate);
+                r.ReturnDate = Convert.ToDateTime(rent.ReturnDate);
+                r.OdoReading=rent.OdoReading;
+                r.ReturnOdoReading = rent.ReturnOdoReading;
+                r.LicenseNumber = rent.Licensenumber;
+
+
+
+                list.Add(r);
+            }
+            return View(list);
+        }
+        public ActionResult Presenttrentals()
+        {
+            List<CarRent> ls = fs.rentlist();
+            Customer k = (Customer)TempData["user"];
+            int id = k.Customerid;
+            TempData["user"] = k;
+            ls = ls.Where(x =>(x.ReturnDate >= DateTime.Today && x.CustomerId==id && x.ReturnOdoReading==null)).ToList();
+            List<CARRENT> list = new List<CARRENT>();
+            foreach (var rent in ls)
+            {
+                CARRENT r = new CARRENT();
+                r.RentId = rent.RentId;
+                r.CarId = rent.CarId;
+                r.CustomerId = rent.CustomerId;
+                r.RentOrderDate = Convert.ToDateTime(rent.RentOrderDate);
+                r.ReturnDate = Convert.ToDateTime(rent.ReturnDate);
+                r.OdoReading = rent.OdoReading;
+                r.ReturnOdoReading = rent.ReturnOdoReading;
+                r.LicenseNumber = rent.Licensenumber;
+
+
+
+
+                list.Add(r);
+            }
+            return View(list);
         }
 
         // GET: Customer/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Cancel(int id)
         {
-            return View();
+            CarRent rent=fs.find(id);
+            
+            CARRENT r = new CARRENT();
+            r.RentId = rent.RentId;
+            r.CarId = rent.CarId;
+            r.CustomerId = rent.CustomerId;
+            r.RentOrderDate = Convert.ToDateTime(rent.RentOrderDate);
+            r.ReturnDate = Convert.ToDateTime(rent.ReturnDate);
+            r.OdoReading = rent.OdoReading;
+            r.ReturnOdoReading = rent.ReturnOdoReading;
+            r.LicenseNumber = rent.Licensenumber;
+
+            return View(r);
         }
 
         // POST: Customer/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Cancel(int id,FormCollection collection)
         {
             try
             {
                 // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                fs.Cancel(id);
+                return RedirectToAction("Presenttrentals");
             }
             catch
             {
                 return View();
             }
         }
+        public ActionResult Return(int id)
+        {
+            CarRent rent=fs.find(id);
+            CARRENT r = new CARRENT();
+            r.RentId = rent.RentId;
+            r.CarId = rent.CarId;
+            r.CustomerId = rent.CustomerId;
+            r.RentOrderDate = Convert.ToDateTime(rent.RentOrderDate);
+            r.ReturnDate = Convert.ToDateTime(rent.ReturnDate);
+            r.OdoReading = rent.OdoReading;
+            r.ReturnOdoReading = rent.ReturnOdoReading;
+            r.LicenseNumber = rent.Licensenumber;
+            return View(r);
+        }
+        [HttpPost]
+        public ActionResult Return(int id,CARRENT rent)
+        {
+            try
+            {
+                CarRent r = new CarRent();
+                r.RentId = rent.RentId;
+                r.CarId = rent.CarId;
+                r.CustomerId = rent.CustomerId;
+                r.RentOrderDate = Convert.ToDateTime(rent.RentOrderDate);
+                r.ReturnDate = Convert.ToDateTime(rent.ReturnDate);
+                r.OdoReading = rent.OdoReading;
+                r.ReturnOdoReading = rent.ReturnOdoReading;
+                r.Licensenumber = rent.LicenseNumber;
+                fs.Return(id, r);
+                return RedirectToAction("Payment", new {id=r.RentId});
+            }
+            catch
+            {
+                return View();
+            }
+        }
+        public ActionResult Payment(int id)
+        {
+            CarRent r=fs.find(id);
+            Cost k1 = new Cost();
+            Tuple<int, double> k = fs.charges(r);
+            k1.KmsCovered = k.Item1;
+            k1.Price = k.Item2;
+            double charge = k.Item2;
+            double tax = 0;
+            if (charge < 1000)
+            {
+                tax = charge * 0.03;
+                charge = charge + tax;
+            }
+            else if (charge < 5000)
+            {
+                tax = charge * 0.05;
+                charge = charge + tax ;
+            }
+            else
+            {
+                tax = charge * 0.08;
+                charge = charge + tax;
+            }
+            k1.tax=tax;
+            k1.TotalCost = charge;
+            return View(k1);
+        }
+        
+        public ActionResult Successful()
+        {
+            return View();
+        }
+
         public ActionResult Search()
         {
             return View();
         }
         [HttpPost]
-        public ActionResult Search(FormCollection c)
+        public ActionResult Search(searchdates s)
         {
-            DateTime k1 = Convert.ToDateTime(c["RentDate"]);
-            DateTime k2 = Convert.ToDateTime(c["ReturnDate"]);
-            TempData["Rentdate"] = k1;
-            TempData["Returndate"] = k2;
-            List<CarRent> m1 = fd.CarRents.ToList();
-            m1=m1.Where(x=>((k1<=x.ReturnDate)&&(x.RentOrderDate>=k2))).ToList();
-            TempData["Carlist"] = from Carid in m1 select Carid;
-            return RedirectToAction("Index");
+            DateTime k1=new DateTime();
+            DateTime k2=new DateTime();
+            Customer k = (Customer)TempData["user"];
+            TempData["user"]=k;
+           
+           
+            if (s.RentDate < DateTime.Today)
+            {
+                
+                ViewBag.Message13 = "Check the date..";
+            }
+            else
+            {
+                k1 = Convert.ToDateTime(s.RentDate);
+                TempData["Rentdate"] = k1;
+            }
+          
+           
+            if (s.ReturnDate < s.RentDate)
+            {
+                ViewBag.Message33 = "ReturnDate can not be more than rent date";
+            }
+            else
+            {
+                k2 = Convert.ToDateTime(s.ReturnDate);
+                TempData["Returndate"] = k2;
+            }
+           List<CarRent> m1 = fs.rentlist();
+            m1 = m1.Where(x => ((k1 <= x.ReturnDate) && (x.RentOrderDate <= k2)) && (x.CustomerId == k.Customerid) && x.ReturnOdoReading==null).ToList();
+            if (m1.Count!=0)
+            {
+                ViewBag.Message14 = "You have booked another car that day";
+            }
+            if (k1.Equals(s.RentDate) && k2.Equals(s.ReturnDate) && (m1.Count==0))
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
+        }
+        public List<int> Carlist()
+        {
+            DateTime k1 = Convert.ToDateTime(TempData["RentDate"]);
+            DateTime k2 = Convert.ToDateTime(TempData["ReturnDate"]);
+            searchdates s=new searchdates();
+            s.ReturnDate = k2;
+            s.RentDate = k1;
+            TempData["Search1"] = s;
 
+            List<CarRent> m1 = fs.rentlist();
+            m1 = m1.Where(x => ((k1 <= x.ReturnDate) && (x.RentOrderDate <= k2))&&x.ReturnOdoReading==null).ToList();
+            List<int> m2 = new List<int>();
+            foreach (var item in m1)
+            {
+                int k = Convert.ToInt32(item.CarId);
+                m2.Add(k);
+            }
+            return m2;
         }
     }
 }

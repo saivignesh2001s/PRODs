@@ -64,5 +64,11 @@ namespace DAL
             k.Available = "No";
             context.SaveChanges();
         }
+        public void unlocked(int id)
+        {
+            Car k = context.Cars.Find(id);
+            k.Available = "Yes";
+            context.SaveChanges();
+        }
     }
 }

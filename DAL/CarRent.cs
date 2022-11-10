@@ -21,6 +21,7 @@ namespace DAL
         public Nullable<int> OdoReading { get; set; }
         public Nullable<System.DateTime> ReturnDate { get; set; }
         public Nullable<int> ReturnOdoReading { get; set; }
+        public string Licensenumber { get; set; }
     
         public virtual Car Car { get; set; }
         public virtual Customer Customer { get; set; }

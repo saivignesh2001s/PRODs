@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<PROD.Models.CARRENT>
 
 @{
-    ViewBag.Title = "OrderedRentals";
+    ViewBag.Title = "Pastrentals";
 }
 
-<h2>OrderedRentals</h2>
+<h2>Pastrentals</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -21,6 +21,9 @@
             @Html.DisplayNameFor(model => model.CustomerId)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.LicenseNumber)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.RentOrderDate)
         </th>
 
@@ -28,7 +31,10 @@
             @Html.DisplayNameFor(model => model.ReturnDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LicenseNumber)
+            @Html.DisplayNameFor(model => model.OdoReading)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReturnOdoReading)
         </th>
 
         <th></th>
@@ -46,6 +52,9 @@
             @Html.DisplayFor(modelItem => item.CustomerId)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.LicenseNumber)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.RentOrderDate)
         </td>
 
@@ -53,13 +62,14 @@
             @Html.DisplayFor(modelItem => item.ReturnDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.LicenseNumber)
+            @Html.DisplayFor(modelItem => item.OdoReading)
         </td>
-
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            @Html.DisplayFor(modelItem => item.ReturnOdoReading)
+        </td>
+        <td>
+            @Html.ActionLink("View", "successful") 
+         
         </td>
     </tr>
 }

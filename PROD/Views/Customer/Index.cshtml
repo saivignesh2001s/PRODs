@@ -5,7 +5,6 @@
 }
 
 
-
 <p style="font-size:15px;margin-left:1000px">
     <img src="@Url.Content("~/images/Profile.png")" width="50" height="50">
     @Html.ActionLink("Profile", "Details")
@@ -56,19 +55,11 @@
             </td>
 
 
-            @if (item.Available.Trim().Equals("Yes"))
-            {
+         
                 <td>
                     @Html.ActionLink("Rent", "Rent", new {id=item.Carid})
                 </td>
-            }
-            else
-            {
-                <td>
-                @Html.ActionLink("Cancel", "Cancel") |
-                @Html.ActionLink("Return", "Return")
-                </td>
-            }
+           
           
 
         </tr>

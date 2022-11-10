@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<PROD.Models.CARRENT>
 
 @{
-    ViewBag.Title = "OrderedRentals";
+    ViewBag.Title = "Presenttrentals";
 }
 
-<h2>OrderedRentals</h2>
+<h2>Presenttrentals</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -21,16 +21,16 @@
             @Html.DisplayNameFor(model => model.CustomerId)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.LicenseNumber)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.RentOrderDate)
         </th>
 
         <th>
             @Html.DisplayNameFor(model => model.ReturnDate)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LicenseNumber)
-        </th>
-
+       
         <th></th>
     </tr>
 
@@ -46,21 +46,45 @@
             @Html.DisplayFor(modelItem => item.CustomerId)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.LicenseNumber)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.RentOrderDate)
         </td>
 
         <td>
             @Html.DisplayFor(modelItem => item.ReturnDate)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LicenseNumber)
-        </td>
+        @if (item.RentOrderDate == DateTime.Today)
+        {
+            if (item.OdoReading is null)
+            {
+                <td>
 
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
+                    @Html.ActionLink("Rentnow", "Rentnow", new { id = item.RentId }) |
+                    @Html.ActionLink("Cancel", "Cancel", new { id = item.RentId })
+                </td>
+            }
+            else
+            {
+    <td>
+        @Html.ActionLink("Return", "Return", new { id = item.RentId })
+    </td>
+            }
+        }
+        else if (item.RentOrderDate >= DateTime.Today)
+        {
+            <td>
+                @Html.ActionLink("Cancel", "Cancel", new { id = item.RentId })
+            </td>
+        }
+        else
+        {
+
+            <td>
+                @Html.ActionLink("Return", "Return", new { id = item.RentId })
+            </td>
+        }
     </tr>
 }
 

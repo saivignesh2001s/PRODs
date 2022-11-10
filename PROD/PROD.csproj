@@ -150,6 +150,7 @@
     </Compile>
     <Compile Include="Models\CAR.cs" />
     <Compile Include="Models\CARRENT.cs" />
+    <Compile Include="Models\Cost.cs" />
     <Compile Include="Models\CustModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -208,6 +209,14 @@
     <Content Include="Views\Customer\Edit.cshtml" />
     <Content Include="Views\Customer\Rent.cshtml" />
     <Content Include="Views\Car\OrderedRentals.cshtml" />
+    <Content Include="Views\Customer\Pastrentals.cshtml" />
+    <Content Include="Views\Customer\Presenttrentals.cshtml" />
+    <Content Include="Views\Customer\Search.cshtml" />
+    <Content Include="Views\Customer\Cancel.cshtml" />
+    <Content Include="Views\Customer\RentNow.cshtml" />
+    <Content Include="Views\Customer\Return.cshtml" />
+    <Content Include="Views\Customer\Payment.cshtml" />
+    <Content Include="Views\Customer\Successful.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -34,6 +34,7 @@
           <Property Name="OdoReading" Type="int" />
           <Property Name="ReturnDate" Type="datetime" />
           <Property Name="ReturnOdoReading" Type="int" />
+          <Property Name="Licensenumber" Type="nchar" MaxLength="15" />
         </EntityType>
         <EntityType Name="Customer">
           <Key>
@@ -119,6 +120,7 @@
           <NavigationProperty Name="Customer" Relationship="Self.fk_rentCustomer" FromRole="CarRent" ToRole="Customer" />
           <Property Name="ReturnDate" Type="DateTime" Precision="3" />
           <Property Name="ReturnOdoReading" Type="Int32" />
+          <Property Name="Licensenumber" Type="String" MaxLength="15" FixedLength="true" Unicode="true" />
         </EntityType>
         <EntityType Name="Customer">
           <Key>
@@ -198,6 +200,7 @@
           <EntitySetMapping Name="CarRents">
             <EntityTypeMapping TypeName="CarRentalModel.CarRent">
               <MappingFragment StoreEntitySet="CarRent">
+                <ScalarProperty Name="Licensenumber" ColumnName="Licensenumber" />
                 <ScalarProperty Name="ReturnOdoReading" ColumnName="ReturnOdoReading" />
                 <ScalarProperty Name="ReturnDate" ColumnName="ReturnDate" />
                 <ScalarProperty Name="RentId" ColumnName="RentId" />
