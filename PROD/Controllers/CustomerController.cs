@@ -27,28 +27,32 @@ namespace PROD.Controllers
         public ActionResult Register()
         {
             CustModel customer = new CustModel();
+            Random k = new Random();
+            customer.Customerid = k.Next(1000, 40000);
             customer.LoyaltyPoints = 0;
             return View(customer);
         }
         [HttpPost]
         public ActionResult Register(FormCollection c)
         {
-            Customer c1 = new Customer();
-            c1.LoyaltyPoints =Convert.ToInt32(c["LoyaltyPoints"]);
-            c1.Customerid = Convert.ToInt32(c["Customerid"]);
-            c1.CustomerName = c["CustomerName"].ToString();
-            c1.mail = c["Email"].ToString();
-            c1.Password = c["Password"].ToString();
-            bool k=cd.AddCustomer(c1);
-            if (k)
-            {
-                return RedirectToAction("Login");
-            }
-            else
-            {
-                return View();
-            }
-
+            
+                Customer c1 = new Customer();
+                c1.LoyaltyPoints = Convert.ToInt32(c["LoyaltyPoints"]);
+                c1.Customerid = Convert.ToInt32(c["Customerid"]);
+                c1.CustomerName = c["CustomerName"].ToString();
+                c1.mail = c["Email"].ToString();
+                c1.Password = c["Password"].ToString();
+                bool k = cd.AddCustomer(c1);
+                if (k)
+                {
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    return View();
+                }
+            
+           
 
         }
         public ActionResult Login()
@@ -82,7 +86,36 @@ namespace PROD.Controllers
 
 
         }
+       public ActionResult forgotpassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult forgotpassword(FormCollection c)
+        {
+            string k = c["Email"].ToString();
+            string p = c["Password"].ToString();
+            Customer c1 = null;
+            foreach(var item in cd.GetCustomers())
+            {
+                if (k == item.mail)
+                {
+                    c1 = item;
+                }
 
+            }
+            c1.Password = p;
+            bool k1 = cd.updatecustomer(c1.Customerid, c1);
+            if (k1)
+            {
+                return RedirectToAction("Login");
+            }
+            else
+            {
+                return View();
+            }
+
+        }
       
         // GET: Customer
         public ActionResult Index()
@@ -178,6 +211,9 @@ namespace PROD.Controllers
 
             Customer k=(Customer)TempData["user"];
             CARRENT r = new CARRENT();
+            Random k1 = new Random();
+            r.RentId = k1.Next(1000,40000);
+
             r.CustomerId = k.Customerid;
             r.CarId = id;
             TempData["user"]=k;
@@ -507,5 +543,6 @@ namespace PROD.Controllers
             }
             return m2;
         }
+   
     }
 }
