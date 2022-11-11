@@ -66,6 +66,18 @@ namespace DAL
                 return false;
             }
         }
+        public void Addloyalty(int km,int id)
+        {
+            Customer k = context.Customers.Find(id);
+            k.LoyaltyPoints += km/50;
+            context.SaveChanges();
+        }
+        public void minusloyalty(int id)
+        {
+            Customer k = context.Customers.Find(id);
+            k.LoyaltyPoints=k.LoyaltyPoints-25;
+            context.SaveChanges();
+        }
        
 
     }

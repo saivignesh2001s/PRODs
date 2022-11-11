@@ -1,15 +1,5 @@
 ﻿@model PROD.Models.Cost
 
-@{
-    ViewBag.Title = "Payment";
-}
-
-<h2>Payment</h2>
-<p style="font-size:15px;margin-left:1000px">
-    <img src="@Url.Content("~/images/Profile.png")" width="50" height="50">
-    @Html.ActionLink("Profile", "Details")
-</p>
-
 <div>
     <h4>Cost</h4>
     <hr />
@@ -21,6 +11,7 @@
         <dd>
             @Html.DisplayFor(model => model.Rentid)
         </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.KmsCovered)
         </dt>
@@ -55,9 +46,13 @@
 
     </dl>
 </div>
+
 <p>
-    @Html.ActionLink("Apply Discount", "ApplyDiscount10", new {id=Model.Rentid}) |
     @Html.ActionLink("Card", "Successful") |
     @Html.ActionLink("Cash", "Successful") |
     @Html.ActionLink("NetBanking", "Successful")
 </p>
+<p style="color:red">@ViewBag.Message4</p>
+<p style="color:green">@ViewBag.Message5</p>
+
+

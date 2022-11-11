@@ -7,6 +7,11 @@ namespace PROD.Models
 {
     public class Cost
     {
+        public int Rentid
+        {
+            get;
+            set;
+        }
         public int KmsCovered
         {
             get;
